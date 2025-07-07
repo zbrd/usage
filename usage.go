@@ -24,14 +24,13 @@ type FlagSet interface {
 	PrintDefaults()
 }
 
-// Program wraps a [FlagSet], adding an extra field `Exec`,
-// which is the path to the program's executable (usually set from
-// [os.Args])
+// Program wraps a [FlagSet], adding functionality to print its
+// usage string using a template (using [Program.PrintUsage])
 type Program struct {
 	FlagSet
 }
 
-// Create a new [Program] struct, using the [FlagSet] fs.
+// Create a new [Program] that wraps the [FlagSet] fs.
 func Prog(fs FlagSet) Program {
 	return Program{fs}
 }

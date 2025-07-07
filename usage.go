@@ -29,32 +29,29 @@ type FlagSet interface {
 // [os.Args])
 type Program struct {
 	FlagSet
-	Exec string
 }
 
 // Create a new [Program] struct, using the [FlagSet] fs.
-// Uses [FlagSet.Name] as the program's Exec field.
 func Prog(fs FlagSet) Program {
-	return ProgExec(fs, fs.Name())
+	return Program{fs}
 }
 
-// Create a new [Program] struct, using the [FlagSet] fs and
-// a custom Exec path.
-func ProgExec(fs FlagSet, exec string) Program {
-	return Program{fs, exec}
+// Base returns the program's executable base name (without dirs)
+func (p Program) Base() string {
+	return path.Base(p.Name())
 }
 
 // Data returns the root template context [Data], with these
 // predefined keys:
-//   - Name: the program's executable base name
-//   - Exec: the program's executable path
+//   - Base: the program's executable base name (without dirs)
+//   - Name: the program's full executable name (from [os.Args])
 //   - Usage: the full usage string from [FlagSet.PrintDefaults]
 //
 // Additional data can be set by passing other [Data]s.
 func (p Program) Data(other ...Data) Data {
 	d := Data{
-		"Name":  path.Base(p.Exec),
-		"Exec":  p.Exec,
+		"Base":  p.Base(),
+		"Name":  p.Name(),
 		"Usage": getUsage(p.FlagSet),
 	}
 
